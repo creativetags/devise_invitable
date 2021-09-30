@@ -38,7 +38,8 @@ class Devise::InvitationsController < DeviseController
   # GET /resource/invitation/accept?invitation_token=abcdef
   def edit
     set_minimum_password_length
-    resource.invitation_token = params[:invitation_token]
+      # Modified by ctgs 2021-09-30 no idea why ? is appended here
+      resource.invitation_token = params[:invitation_token].sub(/\?$/, '')
     render :edit
   end
 
@@ -97,7 +98,10 @@ class Devise::InvitationsController < DeviseController
     end
 
     def resource_from_invitation_token
-      unless params[:invitation_token] && self.resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
+      # Added by ctgs 2021-09-30 no idea why ? is appended here
+      tok = params[:invitation_token].sub(/\?$/, '')
+
+      unless tok && self.resource = resource_class.find_by_invitation_token(tok, true)
         set_flash_message(:alert, :invitation_token_invalid) if is_flashing_format?
         redirect_to after_sign_out_path_for(resource_name)
       end

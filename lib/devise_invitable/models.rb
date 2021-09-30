@@ -343,7 +343,8 @@ module Devise
         # error in invitation_token attribute.
         # Attributes must contain invitation_token, password and confirmation
         def accept_invitation!(attributes = {})
-          original_token = attributes.delete(:invitation_token)
+          # Modified by ctgs 2021-09-30 no idea why ? is appended here
+          original_token = attributes.delete(:invitation_token).sub(/\?$/, '')
           invitable = find_by_invitation_token(original_token, false)
           if invitable.errors.empty?
             invitable.assign_attributes(attributes)
